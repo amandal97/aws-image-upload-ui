@@ -12,9 +12,6 @@ type UserProfilesType = {
 
 const UserProfiles = () => {
 
-  console.log(window.location.hostname);
-  console.log(window.location.port)
-
   const [userProfiles, setUserProfiles] = React.useState<UserProfilesType[] | []>([]);
 
   // API call to fetch user profiles
