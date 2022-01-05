@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import axios from "axios";
 import {useDropzone} from 'react-dropzone'
+import { BASE_URL } from './constants';
 
 type UserProfilesType = {
   userProfileId: string
@@ -11,12 +12,14 @@ type UserProfilesType = {
 
 const UserProfiles = () => {
 
+  console.log(window.location.hostname);
+  console.log(window.location.port)
+
   const [userProfiles, setUserProfiles] = React.useState<UserProfilesType[] | []>([]);
 
+  // API call to fetch user profiles
   const fetchUserProfiles = async () => {
-    const response = await axios.get("http://localhost:8080/api/v1/user-profile")
-    
-    console.log(response)
+    const response = await axios.get(`${BASE_URL}/api/v1/user-profile`)
     
     if (response?.data) setUserProfiles(response.data);
     
@@ -31,6 +34,10 @@ const UserProfiles = () => {
 
       {userProfiles.map(userProfile => (
         <div key={userProfile.userProfileId}>
+          {
+            userProfile.userProfileId && 
+            <img className='profile-image' src={`${BASE_URL}/api/v1/user-profile/${userProfile.userProfileId}/image/download`} alt='no image dropped!'/>
+          }
           <br />
           <br />
           <h1>{userProfile.username}</h1>
@@ -45,18 +52,22 @@ const UserProfiles = () => {
 
 const Dropzone = ({ userProfileId }: UserProfilesType) =>  {
   const onDrop = React.useCallback(acceptedFiles => {
-    const file = acceptedFiles[0];
-    console.log("dropped file", file)
+    // retrieving the dropped file
+    const file = acceptedFiles[0];    
+    
+    // adding file to payload
     const formData = new FormData()
     formData.append("file", file)
-    axios.post(`http://localhost:8080/api/v1/user-profile/${userProfileId}/image/upload`, 
+    
+    // API call to upload the file in S3 Bucket
+    axios.post(`${BASE_URL}/api/v1/user-profile/${userProfileId}/image/upload`, 
     formData, 
     {
       headers: {
         "Content-Type": "multipart/form-data"
       }
-    }).then(res => console.log("successful", res))
-      .catch(err => console.error("error", err))
+    }).then(() => window.location.reload())
+      .catch(() => alert("Error while uploading profile image!"))
   }, [])
   
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
@@ -74,6 +85,7 @@ const Dropzone = ({ userProfileId }: UserProfilesType) =>  {
 }
 
 function App() {
+
   return (
     <div className='App'>
         <UserProfiles />
