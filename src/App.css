@@ -1,5 +1,6 @@
 .App {
-  text-align: center;
+  display: flex;
+  padding: 10px;
 }
 
 .App-logo {
@@ -41,4 +42,29 @@
   height: 45vh;
   width: 22vw;
   border-radius: 50%;
+}
+
+.rightSectionContainer {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.profileWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 67%;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.item {
+  display: flex;
+  align-items: center;
 }
